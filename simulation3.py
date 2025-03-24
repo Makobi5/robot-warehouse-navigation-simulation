@@ -113,6 +113,7 @@ robot_path = []  # Track the robot's movement
 returning = False
 item_picked = False
 arrived_at_packing = False
+picking_delay = False # to add the picking delay
 
 while running:
     screen.fill(WHITE)
@@ -140,22 +141,29 @@ while running:
             time.sleep(0.2)  # Delay for animation
         else:
             item_picked = True
+            picking_delay = True #Start picking delay
             robot_path = []  # Clear path for return journey
 
         for step in robot_path:
             pygame.draw.rect(screen, BLUE, (step[1] * CELL_SIZE, step[0] * CELL_SIZE, CELL_SIZE, CELL_SIZE))
 
-    elif item_picked and path_to_packing and not arrived_at_packing:
+    elif item_picked and path_to_packing and not arrived_at_packing and not picking_delay:
         pygame.draw.rect(screen, YELLOW, (item_location[1] * CELL_SIZE, item_location[0] * CELL_SIZE, CELL_SIZE, CELL_SIZE))
 
         if robot_path != path_to_packing:
             robot_path.append(path_to_packing[len(robot_path)])
             time.sleep(0.2)
+
         else:
             arrived_at_packing = True
 
         for step in robot_path:
             pygame.draw.rect(screen, BLUE, (step[1] * CELL_SIZE, step[0] * CELL_SIZE, CELL_SIZE, CELL_SIZE))
+
+    elif picking_delay:
+        pygame.draw.rect(screen, YELLOW, (item_location[1] * CELL_SIZE, item_location[0] * CELL_SIZE, CELL_SIZE, CELL_SIZE))
+        time.sleep(1)  # Simulate the robot picking up the item for 1 second
+        picking_delay = False #Stop picking delay
 
     else:
         running = False  # Terminate when arrived at packing
